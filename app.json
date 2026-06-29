@@ -1,0 +1,16 @@
+{
+  "expo": {
+    "name": "RunnaCoach",
+    "slug": "runnacoach",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.poovarasan.runnacoach"
+    },
+    "android": {
+      "package": "com.poovarasan.runnacoach"
+    }
+  }
+}
