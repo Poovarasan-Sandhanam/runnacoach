@@ -10,4 +10,8 @@ export interface RunSession {
   effort: EffortLevel;
   consecutiveHardRuns: number; // Track count for recovery protection rule
   date: string; // ISO date format "YYYY-MM-DD"
+  rpe?: number; // 1-10 Rate of Perceived Exertion
+  soreness?: number; // 1-5 muscle soreness
+  sleepQuality?: number; // 1-5 sleep quality
+  avgHeartRate?: number; // Average heart rate in bpm
 }

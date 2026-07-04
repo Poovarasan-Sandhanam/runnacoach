@@ -1,4 +1,5 @@
 export type WorkoutType = 'Easy Run' | 'Tempo Run' | 'Long Run' | 'Rest Day';
+export type WorkoutStatus = 'Scheduled' | 'Completed' | 'Modified' | 'Rest Day';
 
 export interface Workout {
   id: string;
@@ -9,6 +10,8 @@ export interface Workout {
   targetPace: string; // e.g. "6:30/km"
   isCompleted: boolean;
   sessionId?: string; // Links to completed RunSession
+  status?: WorkoutStatus;
+  fatigueWarning?: string; // e.g. "Volume scaled back due to muscle soreness"
 }
 
 export interface WorkoutPlan {

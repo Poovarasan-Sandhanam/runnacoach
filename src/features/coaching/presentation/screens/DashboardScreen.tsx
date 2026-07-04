@@ -4,7 +4,18 @@ import { useDashboardViewModel } from '../viewmodels/useDashboardViewModel';
 import { Workout } from '../../domain/models/Workout';
 
 export const DashboardScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
-  const { user, currentPlan, history, totalDistance, weeklyProgress, nextWorkout, syncData } = useDashboardViewModel();
+  const { 
+    user, 
+    currentPlan, 
+    history, 
+    totalDistance, 
+    weeklyProgress, 
+    nextWorkout, 
+    trainingStatus, 
+    trainingStatusExplanation, 
+    weeklySummary, 
+    syncData 
+  } = useDashboardViewModel();
 
   if (!user || !currentPlan) {
     return (
@@ -36,6 +47,30 @@ export const DashboardScreen: React.FC<{ navigation: any }> = ({ navigation }) =
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
+        {/* WEEKLY OUTCOME SUMMARY */}
+        <View style={styles.weeklySummaryCard}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+            <Text style={styles.summaryTitle}>Coach's Weekly Log</Text>
+            <View style={[
+              styles.statusBadge,
+              trainingStatus === 'Building' && styles.statusBuilding,
+              trainingStatus === 'Recovering' && styles.statusRecovering,
+              trainingStatus === 'Ready' && styles.statusReady
+            ]}>
+              <Text style={[
+                styles.statusBadgeText,
+                trainingStatus === 'Building' && styles.statusBuildingText,
+                trainingStatus === 'Recovering' && styles.statusRecoveringText,
+                trainingStatus === 'Ready' && styles.statusReadyText
+              ]}>
+                {trainingStatus === 'Building' ? '⚡ BUILDING' : trainingStatus === 'Recovering' ? '🛡️ RECOVERING' : '🟢 READY'}
+              </Text>
+            </View>
+          </View>
+          <Text style={styles.summaryBody}>{weeklySummary}</Text>
+          <Text style={styles.statusExplanationText}>{trainingStatusExplanation}</Text>
+        </View>
+
         {/* STATS OVERVIEW CARD */}
         <View style={styles.statsCard}>
           <Text style={styles.statsCardTitle}>Training Progress</Text>
@@ -60,16 +95,34 @@ export const DashboardScreen: React.FC<{ navigation: any }> = ({ navigation }) =
 
         {/* NEXT WORKOUT CALLOUT */}
         {nextWorkout ? (
-          <View style={styles.nextWorkoutCard}>
+          <View style={[
+            styles.nextWorkoutCard, 
+            nextWorkout.status === 'Modified' && styles.nextWorkoutModifiedCard
+          ]}>
             <View style={{ flex: 1 }}>
-              <Text style={styles.nextWorkoutTag}>NEXT SESSION</Text>
+              <View style={styles.tagRow}>
+                <Text style={styles.nextWorkoutTag}>NEXT SESSION</Text>
+                {nextWorkout.status === 'Modified' && (
+                  <View style={styles.modifiedBadge}>
+                    <Text style={styles.modifiedBadgeText}>🛡️ ADAPTED</Text>
+                  </View>
+                )}
+              </View>
               <Text style={styles.nextWorkoutTitle}>{nextWorkout.type}</Text>
               <Text style={styles.nextWorkoutDetail}>
                 {nextWorkout.duration} mins • Target: {nextWorkout.targetPace}
               </Text>
+              {nextWorkout.fatigueWarning && (
+                <Text style={styles.fatigueWarningText}>
+                  {nextWorkout.fatigueWarning}
+                </Text>
+              )}
             </View>
             <TouchableOpacity 
-              style={styles.startWorkoutButton}
+              style={[
+                styles.startWorkoutButton,
+                nextWorkout.status === 'Modified' && styles.startWorkoutModifiedButton
+              ]}
               onPress={() => handleStartWorkout(nextWorkout.id)}
             >
               <Text style={styles.startWorkoutButtonText}>START</Text>
@@ -97,12 +150,24 @@ export const DashboardScreen: React.FC<{ navigation: any }> = ({ navigation }) =
               <Text style={styles.dayText}>{getDayName(workout.dayOfWeek)}</Text>
             </View>
             <View style={styles.workoutInfoCol}>
-              <Text style={[styles.workoutTypeText, workout.isCompleted && styles.completedText]}>
-                {workout.type}
-              </Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                <Text style={[styles.workoutTypeText, workout.isCompleted && styles.completedText]}>
+                  {workout.type}
+                </Text>
+                {workout.status === 'Modified' && (
+                  <View style={styles.rowModifiedBadge}>
+                    <Text style={styles.rowModifiedBadgeText}>ADAPTED</Text>
+                  </View>
+                )}
+              </View>
               {workout.type !== 'Rest Day' && (
                 <Text style={styles.workoutDurationText}>
                   {workout.duration} mins • Target: {workout.targetPace}
+                </Text>
+              )}
+              {workout.fatigueWarning && !workout.isCompleted && (
+                <Text style={styles.rowWarningText} numberOfLines={1}>
+                  ⚠️ {workout.fatigueWarning}
                 </Text>
               )}
             </View>
@@ -180,6 +245,57 @@ const styles = StyleSheet.create({
     padding: 24,
     paddingTop: 16,
   },
+  weeklySummaryCard: {
+    backgroundColor: 'rgba(255, 255, 255, 0.03)',
+    borderRadius: 20,
+    padding: 20,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.05)',
+    marginBottom: 20,
+  },
+  summaryTitle: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: '#00F2FE',
+  },
+  summaryBody: {
+    fontSize: 14,
+    color: '#E0E0E6',
+    lineHeight: 20,
+    marginBottom: 12,
+  },
+  statusBadge: {
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    borderRadius: 6,
+  },
+  statusBuilding: {
+    backgroundColor: 'rgba(0, 242, 254, 0.15)',
+  },
+  statusRecovering: {
+    backgroundColor: 'rgba(255, 149, 0, 0.15)',
+  },
+  statusReady: {
+    backgroundColor: 'rgba(76, 217, 100, 0.15)',
+  },
+  statusBadgeText: {
+    fontSize: 10,
+    fontWeight: '800',
+  },
+  statusBuildingText: {
+    color: '#00F2FE',
+  },
+  statusRecoveringText: {
+    color: '#FF9500',
+  },
+  statusReadyText: {
+    color: '#4CD964',
+  },
+  statusExplanationText: {
+    fontSize: 12,
+    color: '#9F85FF',
+    fontWeight: '600',
+  },
   statsCard: {
     backgroundColor: 'rgba(255, 255, 255, 0.03)',
     borderRadius: 20,
@@ -235,12 +351,60 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 24,
   },
+  nextWorkoutModifiedCard: {
+    backgroundColor: 'rgba(255, 59, 48, 0.05)',
+    borderColor: 'rgba(255, 59, 48, 0.3)',
+  },
+  tagRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 6,
+  },
+  modifiedBadge: {
+    backgroundColor: 'rgba(255, 59, 48, 0.15)',
+    paddingVertical: 2,
+    paddingHorizontal: 6,
+    borderRadius: 6,
+  },
+  modifiedBadgeText: {
+    color: '#FF3B30',
+    fontSize: 10,
+    fontWeight: '800',
+  },
+  fatigueWarningText: {
+    color: '#FF9500',
+    fontSize: 11,
+    fontWeight: '600',
+    marginTop: 8,
+    lineHeight: 15,
+  },
+  startWorkoutModifiedButton: {
+    backgroundColor: '#FF3B30',
+    shadowColor: '#FF3B30',
+  },
+  rowModifiedBadge: {
+    backgroundColor: 'rgba(0, 242, 254, 0.15)',
+    paddingVertical: 1,
+    paddingHorizontal: 4,
+    borderRadius: 4,
+  },
+  rowModifiedBadgeText: {
+    color: '#00F2FE',
+    fontSize: 8,
+    fontWeight: '800',
+  },
+  rowWarningText: {
+    color: '#FF9500',
+    fontSize: 10,
+    fontWeight: '500',
+    marginTop: 2,
+  },
   nextWorkoutTag: {
     fontSize: 10,
     fontWeight: '800',
     color: '#9F85FF',
     letterSpacing: 1.2,
-    marginBottom: 6,
   },
   nextWorkoutTitle: {
     fontSize: 18,

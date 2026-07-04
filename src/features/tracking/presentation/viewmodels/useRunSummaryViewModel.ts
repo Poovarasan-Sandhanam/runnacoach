@@ -17,6 +17,10 @@ export const useRunSummaryViewModel = (
   const history = useAppSelector((state) => state.tracking.history);
 
   const [effort, setEffort] = useState<EffortLevel>('Medium');
+  const [rpe, setRpe] = useState<number>(5);
+  const [soreness, setSoreness] = useState<number>(1);
+  const [sleepQuality, setSleepQuality] = useState<number>(3);
+  const [avgHeartRate, setAvgHeartRate] = useState<number>(140);
 
   // Compute pace
   const getPace = () => {
@@ -32,9 +36,10 @@ export const useRunSummaryViewModel = (
   const logRun = async () => {
     if (!user) return;
 
-    // 1. Calculate consecutive hard runs
+    // 1. Calculate consecutive hard runs based on RPE-derived effort
+    const calculatedEffort = rpe <= 3 ? 'Easy' : rpe <= 7 ? 'Medium' : 'Hard';
     let consecutiveHard = 0;
-    if (effort === 'Hard') {
+    if (calculatedEffort === 'Hard') {
       consecutiveHard = 1;
       // Look back at history
       for (let i = history.length - 1; i >= 0; i--) {
@@ -46,7 +51,7 @@ export const useRunSummaryViewModel = (
       }
     }
 
-    // 2. Create the completed run session entity
+    // 2. Create the completed run session entity with new subjective/objective signals
     const newSession: RunSession = {
       id: `session_${Date.now()}`,
       userId: user.id,
@@ -54,9 +59,13 @@ export const useRunSummaryViewModel = (
       distanceKm: parseFloat(distanceKm.toFixed(2)),
       timeSeconds,
       pace: getPace(),
-      effort,
+      effort: calculatedEffort,
       consecutiveHardRuns: consecutiveHard,
       date: new Date().toISOString().split('T')[0],
+      rpe,
+      soreness,
+      sleepQuality,
+      avgHeartRate,
     };
 
     // 3. Save session locally
@@ -81,6 +90,14 @@ export const useRunSummaryViewModel = (
   return {
     effort,
     setEffort,
+    rpe,
+    setRpe,
+    soreness,
+    setSoreness,
+    sleepQuality,
+    setSleepQuality,
+    avgHeartRate,
+    setAvgHeartRate,
     getPace,
     logRun,
   };
