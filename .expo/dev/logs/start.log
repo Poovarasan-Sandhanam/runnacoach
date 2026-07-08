@@ -1,4 +1,0 @@
-{"_e":"root:init","_t":1782776555144,"format":"v0-jsonl","version":"56.1.16"}
-{"_e":"devserver:start","_t":1782776555157,"mode":"development","web":true,"baseUrl":"","asyncRoutes":false,"routerRoot":"../../../app","serverComponents":false,"serverActions":false,"serverRendering":false,"apiRoutes":false,"exporting":false}
-{"_e":"metro:config","_t":1782776555459,"serverRoot":"../../..","projectRoot":"../../..","exporting":false,"flags":{"autolinkingModuleResolution":false,"serverActions":false,"serverComponents":false,"reactCompiler":false,"optimizeGraph":false,"treeshaking":false,"logbox":false}}
-{"_e":"metro:instantiate","_t":1782776555926,"atlas":false,"workers":6,"host":"::","port":8082}
