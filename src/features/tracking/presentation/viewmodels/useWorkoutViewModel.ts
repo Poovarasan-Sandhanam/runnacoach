@@ -30,7 +30,7 @@ export const useWorkoutViewModel = (workoutId?: string) => {
       stopTimer();
       subscription.remove();
     };
-  }, []);
+  }, [workoutId]);
 
   const startTimer = () => {
     if (intervalRef.current) return;

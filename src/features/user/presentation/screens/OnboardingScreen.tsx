@@ -80,8 +80,8 @@ export const OnboardingScreen: React.FC<{ navigation: any }> = ({ navigation }) 
           </View>
         </View>
 
-        <TouchableOpacity 
-          style={[styles.button, !name.trim() && styles.buttonDisabled]} 
+        <TouchableOpacity
+          style={[styles.button, !name.trim() && styles.buttonDisabled]}
           onPress={handleStart}
           disabled={!name.trim()}
         >

@@ -1,0 +1,29 @@
+# macOS
+.DS_Store
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Expo
+.expo/
+
+# Xcode
+ios/build/
+ios/Pods/
+ios/Podfile.lock
+ios/.xcode.env.local
+
+# Android
+android/app/build/
+android/build/
+android/local.properties
+android/GeneratedPluginRegistrant.java
+
+# TypeScript
+tsconfig.tsbuildinfo
+
+# Debug logs
+*.log

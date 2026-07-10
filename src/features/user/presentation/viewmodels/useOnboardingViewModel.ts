@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useAppDispatch } from '../../../../shared/redux/store';
+import { useAppDispatch, useAppSelector } from '../../../../shared/redux/store';
 import { setUser, setLoading } from '../../../../shared/redux/slices/userSlice';
 import { setCurrentPlan } from '../../../../shared/redux/slices/coachingSlice';
 import { FitnessGoal, FitnessLevel, User } from '../../domain/models/User';
@@ -8,6 +8,7 @@ import { coachingRepository } from '../../../coaching/data/repositories/Coaching
 
 export const useOnboardingViewModel = () => {
   const dispatch = useAppDispatch();
+  const email = useAppSelector((state) => state.user.email);
   const [name, setName] = useState('');
   const [goal, setGoal] = useState<FitnessGoal>('5K');
   const [level, setLevel] = useState<FitnessLevel>('Beginner');
@@ -17,7 +18,7 @@ export const useOnboardingViewModel = () => {
     if (!name.trim()) return;
     dispatch(setLoading(true));
 
-    const userId = 'user_mvp';
+    const userId = email || 'user_mvp';
     const newUser: User = { id: userId, name, goal, level, daysPerWeek: days };
 
     // Generate Initial structured Workout Plan based on goal/level

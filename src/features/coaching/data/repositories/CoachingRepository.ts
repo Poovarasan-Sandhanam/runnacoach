@@ -97,7 +97,7 @@ export class CoachingRepository implements ICoachingRepository {
         success: true,
         lastSyncedAt: syncedAt,
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         lastSyncedAt:

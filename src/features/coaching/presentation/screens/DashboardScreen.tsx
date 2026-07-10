@@ -2,8 +2,11 @@ import React from 'react';
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, SafeAreaView } from 'react-native';
 import { useDashboardViewModel } from '../viewmodels/useDashboardViewModel';
 import { Workout } from '../../domain/models/Workout';
+import { useAppDispatch } from '../../../../shared/redux/store';
+import { logout } from '../../../../shared/redux/slices/userSlice';
 
 export const DashboardScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
+  const dispatch = useAppDispatch();
   const { 
     user, 
     currentPlan, 
@@ -41,9 +44,17 @@ export const DashboardScreen: React.FC<{ navigation: any }> = ({ navigation }) =
           <Text style={styles.welcomeText}>Welcome back,</Text>
           <Text style={styles.nameText}>{user.name}</Text>
         </View>
-        <TouchableOpacity style={styles.syncButton} onPress={syncData}>
-          <Text style={styles.syncButtonText}>Sync</Text>
-        </TouchableOpacity>
+        <View style={{ flexDirection: 'row', gap: 10 }}>
+          <TouchableOpacity style={styles.syncButton} onPress={syncData}>
+            <Text style={styles.syncButtonText}>Sync</Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={[styles.syncButton, { borderColor: 'rgba(255, 74, 74, 0.3)' }]} 
+            onPress={() => dispatch(logout())}
+          >
+            <Text style={[styles.syncButtonText, { color: '#FF4A4A' }]}>Logout</Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent}>

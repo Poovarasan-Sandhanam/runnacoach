@@ -59,12 +59,10 @@ export function getChronicWorkload(history: RunSession[], referenceDateStr: stri
   const twentyEightDaysAgo = new Date(refDate.getTime() - 28 * 24 * 60 * 60 * 1000);
   
   let totalLoad = 0;
-  let sessionsInScope = 0;
   for (const session of history) {
     const sessionDate = new Date(session.date);
     if (sessionDate >= twentyEightDaysAgo && sessionDate <= refDate) {
       totalLoad += calculateRunLoad(session);
-      sessionsInScope++;
     }
   }
   
